@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1011182926285",
+    "project_id": "devestyle-6aa8c",
+    "storage_bucket": "devestyle-6aa8c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1011182926285:android:0d3ecc99e62fc0afa46c84",
+        "android_client_info": {
+          "package_name": "com.example.gromify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1011182926285-prtv1amjaiv5bflri121rscnv3pl1toj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0b0EVyby55VbQBXSo2yNrOH_dOQ6dZp4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1011182926285-prtv1amjaiv5bflri121rscnv3pl1toj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
