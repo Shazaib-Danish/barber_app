@@ -23,4 +23,11 @@ final kTextFormFieldDecoration = InputDecoration(
       width: 2.0,
     ),
   ),
+  errorBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(20.0),
+    borderSide: const BorderSide(
+      color: Colors.red,
+      width: 2.0,
+    ),
+  ),
 );

@@ -1,12 +1,14 @@
-class UserInformation{
-  final String usrFullName;
-  final String userEmail;
-  final String userContact;
-  final String userPassword;
+class CustomerInfo {
+  final String customerFullName;
+  final String customerEmail;
+  final String customerContact;
+  final String customerPassword;
+  final String roll;
 
-  UserInformation(
-      {required this.usrFullName,
-      required this.userEmail,
-      required this.userContact,
-      required this.userPassword});
+  CustomerInfo(
+      {required this.customerFullName,
+      required this.customerEmail,
+      required this.customerContact,
+      required this.roll,
+      required this.customerPassword});
 }

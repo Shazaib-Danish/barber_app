@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gromify/components/k_components.dart';
 import 'package:gromify/firebase_authentications/firebase_authen.dart';
 import 'package:gromify/screens/otp_screen.dart';
+import 'package:gromify/widgets/cust_barber_dropdown.dart';
 import 'package:lottie/lottie.dart';
 
 import '../model/user_model.dart';
@@ -25,6 +26,8 @@ class _SignupScreenState extends State<SignupScreen> {
   TextEditingController passwordController = TextEditingController();
 
   TextEditingController rePasswordController = TextEditingController();
+
+  late String roll;
 
   bool isLoading = false;
 
@@ -59,9 +62,6 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 10.0,
-                ),
                 Container(
                   height: 60,
                   child: TextFormField(
@@ -72,9 +72,6 @@ class _SignupScreenState extends State<SignupScreen> {
                       labelText: 'Email',
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 10.0,
                 ),
                 Container(
                   height: 60,
@@ -87,8 +84,13 @@ class _SignupScreenState extends State<SignupScreen> {
                         labelText: 'Contact', prefixText: '+92'),
                   ),
                 ),
+                ReusableDropDown(onChanged: (value) {
+                  setState(() {
+                    roll = value!;
+                  });
+                }),
                 const SizedBox(
-                  height: 10.0,
+                  height: 8.0,
                 ),
                 Container(
                   height: 60,
@@ -119,28 +121,40 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
                 MaterialButton(
                   onPressed: () async {
-                    if (passwordController.text != rePasswordController.text) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Password Not match')));
+                    if (fullNameController.text.isEmpty &&
+                        emailController.text.isEmpty &&
+                        contactController.text.isEmpty &&
+                        roll == 'Select' &&
+                        passwordController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text('Please fill all the fields')));
                     } else {
-                      setState(() {
-                        isLoading = true;
-                      });
-                      final userModel = UserInformation(
-                          usrFullName: fullNameController.text,
-                          userEmail: emailController.text,
-                          userContact: '+92${contactController.text}',
-                          userPassword: rePasswordController.text);
-                      sendSms(userModel.userContact).whenComplete(() {
+                      if (passwordController.text !=
+                          rePasswordController.text) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Password Not match')));
+                      } else {
                         setState(() {
-                          isLoading = false;
+                          isLoading = true;
                         });
-                        Navigator.push(
-                            context,
-                            CupertinoPageRoute(
-                                builder: (context) =>
-                                    OtpScreen(user: userModel)));
-                      });
+                        final userModel = CustomerInfo(
+                            customerFullName: fullNameController.text,
+                            customerEmail: emailController.text,
+                            customerContact: '+92${contactController.text}',
+                            roll: roll,
+                            customerPassword: rePasswordController.text);
+                        sendSms(userModel.customerContact).whenComplete(() {
+                          setState(() {
+                            isLoading = false;
+                          });
+                          Navigator.push(
+                              context,
+                              CupertinoPageRoute(
+                                  builder: (context) =>
+                                      OtpScreen(user: userModel)));
+                        });
+                      }
                     }
                   },
                   minWidth: double.infinity,
@@ -157,10 +171,9 @@ class _SignupScreenState extends State<SignupScreen> {
                         : const Text(
                             'Signup',
                             style: TextStyle(
-                              fontWeight: FontWeight.w900,
-                              fontSize: 20.0,
-                              color: Colors.white
-                            ),
+                                fontWeight: FontWeight.w900,
+                                fontSize: 20.0,
+                                color: Colors.white),
                           ),
                   ),
                 ),

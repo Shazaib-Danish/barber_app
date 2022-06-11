@@ -9,7 +9,6 @@ import 'package:smooth_star_rating_null_safety/smooth_star_rating_null_safety.da
 
 import '../data manager/data_manager.dart';
 import '../model/barber_model.dart';
-import '../model/data.dart';
 import '../theme/light_color.dart';
 import '../theme/text_styles.dart';
 import '../theme/theme.dart';
@@ -39,9 +38,8 @@ class _HomePageState extends State<HomePageScreen> {
 
   @override
   void initState() {
-    barberDataList = barberMapList.map((x) => BarberModel.fromJson(x)).toList();
-    topBarberList = topList.map((x) => BarberModel.fromJson(x)).toList();
-    WidgetsBinding.instance?.addPostFrameCallback((_){
+
+    WidgetsBinding.instance.addPostFrameCallback((_){
       Provider.of<DataManagerProvider>(context, listen: false).setAllBarbers(barberDataList);
     });
 
@@ -203,7 +201,8 @@ class _HomePageState extends State<HomePageScreen> {
               ).p16,
             ),
           ),
-        ).ripple(() {}, borderRadius: BorderRadius.all(Radius.circular(20))),
+        ).ripple(() {
+        }, borderRadius: BorderRadius.all(Radius.circular(20))),
       ).ripple(
         () {
           Navigator.push(

@@ -1,13 +1,13 @@
 import 'dart:async';
-
+import 'package:gromify/screens/login%20_screen.dart';
+import 'package:map_location_picker/generated/l10n.dart' as location_picker;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:gromify/data%20manager/data_manager.dart';
 import 'package:gromify/firebase_authentications/firebase_authen.dart';
-import 'package:gromify/firebase_data/firebase_data.dart';
-import 'package:gromify/screens/dashboard.dart';
-import 'package:gromify/screens/login%20_screen.dart';
+import 'package:gromify/screens/barber/shop_details_screen.dart';
 import 'package:provider/provider.dart';
+//import 'package:localization/localization.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -27,7 +27,13 @@ class MyApp extends StatelessWidget {
       },
       child: MaterialApp(
         title: "DeveStyle",
-
+        localizationsDelegates:  const [
+          location_picker.S.delegate,
+        ],
+        supportedLocales: const <Locale>[
+          Locale('en', ''),
+          Locale('ar', ''),
+        ],
         // --------------------- Add Theme Data ---------------------- //
         // Add theme data here
         theme: ThemeData(
@@ -96,7 +102,7 @@ class _SplashScreen extends State<SplashScreen> {
     Timer(Duration(seconds: 5), () {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (BuildContext context) => loginSuccess ? HomePageScreen() : LoginScreen(),
+          builder: (BuildContext context) => LoginScreen()//loginSuccess ? HomePageScreen() : LoginScreen(),
         ),
       );
     });

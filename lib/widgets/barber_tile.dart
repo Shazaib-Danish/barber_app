@@ -58,7 +58,7 @@ Widget barberTile(BarberModel model, BuildContext context) {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              model.barberName,
+              model.barber.barberFullName,
               style: TextStyles.bodySm.subTitleColor.bold
                   .copyWith(fontSize: 12.0),
             ),

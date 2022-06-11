@@ -9,7 +9,7 @@ import 'package:pinput/pinput.dart';
 class OtpScreen extends StatefulWidget {
   const OtpScreen({Key? key, required this.user}) : super(key: key);
 
-  final UserInformation user;
+  final CustomerInfo user;
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -23,7 +23,7 @@ class _OtpScreenState extends State<OtpScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(
-        color: Colors.grey[700],
+        color: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 20.0),
         child: SafeArea(
           child: Column(
@@ -41,13 +41,13 @@ class _OtpScreenState extends State<OtpScreen> {
                 style: TextStyle(
                     fontSize: 25.0,
                     fontWeight: FontWeight.w700,
-                    color: Colors.white),
+                    color: Colors.black),
               ),
               const SizedBox(
                 height: 10.0,
               ),
               Text(
-                'Enter 6 digit code send to your number ${widget.user.userContact}',
+                'Enter 6 digit code send to your number ${widget.user.customerContact}',
                 style: const TextStyle(
                   fontSize: 16.0,
                 ),
@@ -62,10 +62,10 @@ class _OtpScreenState extends State<OtpScreen> {
                   height: 50,
                   textStyle: const TextStyle(
                       fontSize: 20,
-                      color: Colors.white,
+                      color: Colors.black,
                       fontWeight: FontWeight.w600),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Color.fromRGBO(234, 239, 243, 1)),
+                    border: Border.all(color: Colors.grey),
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
@@ -76,6 +76,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   setState(() {
                     isLoading = true;
                   });
+
                   verify(pin, context, widget.user)
                       .whenComplete(() => setState(() {
                             isLoading = false;
@@ -108,6 +109,7 @@ class _OtpScreenState extends State<OtpScreen> {
                           style: TextStyle(
                             fontWeight: FontWeight.w900,
                             fontSize: 20.0,
+                            color: Colors.white
                           ),
                         ),
                 ),

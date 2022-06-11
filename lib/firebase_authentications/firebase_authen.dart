@@ -6,6 +6,8 @@ import 'package:gromify/model/user_model.dart';
 import 'package:gromify/screens/dashboard.dart';
 import 'package:provider/provider.dart';
 
+import '../screens/barber/shop_details_screen.dart';
+
 String verificationID = '';
 
 Future<void> sendSms(String phoneNumber) async {
@@ -21,7 +23,8 @@ Future<void> sendSms(String phoneNumber) async {
   );
 }
 
-Future<void> verify(smsCode, BuildContext context, UserInformation user) async {
+Future<void> verify(
+    smsCode, BuildContext context, CustomerInfo customer) async {
   PhoneAuthCredential credential = PhoneAuthProvider.credential(
       verificationId: verificationID, smsCode: smsCode);
   late String code;
@@ -30,16 +33,32 @@ Future<void> verify(smsCode, BuildContext context, UserInformation user) async {
     try {
       final userResult = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
-              email: user.userEmail, password: user.userPassword);
+              email: customer.customerEmail,
+              password: customer.customerPassword);
       if (userResult != null) {
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-            email: user.userEmail, password: user.userPassword).whenComplete(() {
-          addProfileData(user);
-          Provider.of<DataManagerProvider>(context, listen: false).setUserProfile(user);
+        await FirebaseAuth.instance
+            .signInWithEmailAndPassword(
+                email: customer.customerEmail,
+                password: customer.customerPassword)
+            .whenComplete(() {
+          if (customer.roll == 'Customer') {
+            addCustomerProfileData(customer);
+            Provider.of<DataManagerProvider>(context, listen: false)
+                .setCustomerProfile(customer);
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => HomePageScreen()),
+                (Route<dynamic> route) => false);
+          } else {
+            Provider.of<DataManagerProvider>(context, listen: false).setBarberBasicInformation(
+                customer.customerFullName,
+                customer.customerEmail,
+                customer.customerContact);
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                    builder: (context) =>  ShopDetailsScreen()),
+                (Route<dynamic> route) => false);
+          }
         });
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => HomePageScreen()),
-            (Route<dynamic> route) => false);
       }
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context)
@@ -65,7 +84,7 @@ Future<void> signIn(String email, String password, BuildContext context) async {
       await getUserProfile(email, context).whenComplete(() {
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => HomePageScreen()),
-                (Route<dynamic> route) => false);
+            (Route<dynamic> route) => false);
       });
     }
   } on FirebaseAuthException catch (e) {

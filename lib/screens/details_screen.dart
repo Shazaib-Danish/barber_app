@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gromify/theme/extention.dart';
 import 'package:smooth_star_rating_null_safety/smooth_star_rating_null_safety.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../model/barber_model.dart';
 import '../theme/light_color.dart';
 import '../theme/text_styles.dart';
@@ -18,6 +19,7 @@ Created Date: 30 April 2021
 
 class DetailScreen extends StatefulWidget {
   final BarberModel model;
+
   DetailScreen({
     Key? key,
     required this.model,
@@ -29,6 +31,7 @@ class DetailScreen extends StatefulWidget {
 
 class _DetailPageState extends State<DetailScreen> {
   late BarberModel model;
+
   @override
   void initState() {
     model = widget.model;
@@ -43,14 +46,15 @@ class _DetailPageState extends State<DetailScreen> {
       throw 'Could not launch $url';
     }
   }
-  _smsLauncher(String phoneNumber) async{
+
+  _smsLauncher(String phoneNumber) async {
     // Android
     String message = '';
     String uri = 'sms:$phoneNumber?body=$message';
     if (await canLaunch(uri)) {
-    await launch(uri);
+      await launch(uri);
     } else {
-    throw 'Could not launch';
+      throw 'Could not launch';
     }
   }
 
@@ -61,17 +65,17 @@ class _DetailPageState extends State<DetailScreen> {
         const BackButton(
           color: Colors.white,
         ),
-        IconButton(
-          icon: Icon(
-            model.isfavourite ? Icons.favorite : Icons.favorite_border,
-            color: model.isfavourite ? Colors.deepOrange : Colors.white,
-          ),
-          onPressed: () {
-            setState(() {
-              model.isfavourite = !model.isfavourite;
-            });
-          },
-        )
+        // IconButton(
+        //   icon: Icon(
+        //     model.isfavourite ? Icons.favorite : Icons.favorite_border,
+        //     color: model.isfavourite ? Colors.deepOrange : Colors.white,
+        //   ),
+        //   onPressed: () {
+        //     setState(() {
+        //       model.isfavourite = !model.isfavourite;
+        //     });
+        //   },
+        // )
       ],
     );
   }
@@ -95,7 +99,10 @@ class _DetailPageState extends State<DetailScreen> {
                   color: Colors.blueAccent,
                   width: MediaQuery.of(context).size.width * 1.0,
                   height: MediaQuery.of(context).size.height * 0.45,
-                  child: Image.asset(model.image, fit: BoxFit.fitHeight,)),
+                  child: Image.asset(
+                    model.image,
+                    fit: BoxFit.fitHeight,
+                  )),
             ),
             DraggableScrollableSheet(
               maxChildSize: .8,
@@ -128,9 +135,7 @@ class _DetailPageState extends State<DetailScreen> {
                             children: <Widget>[
                               Text(
                                 model.shopName,
-                                style: titleStyle.copyWith(
-                                  color: Colors.black
-                                ),
+                                style: titleStyle.copyWith(color: Colors.black),
                               ),
                               const SizedBox(
                                 width: 10,
@@ -152,31 +157,42 @@ class _DetailPageState extends State<DetailScreen> {
                                     halfFilledIconData: Icons.star,
                                     color: Colors.yellow,
                                     borderColor: Colors.yellow,
-                                    spacing:0.0
-                                ),
+                                    spacing: 0.0),
                               ),
                             ],
                           ),
                           subtitle: Row(
                             children: [
                               Text(
-                                model.barberName,
+                                model.barber.barberFullName,
                                 style: TextStyles.bodySm.subTitleColor.bold,
                               ),
                               Spacer(),
-                              Text(model.seats, style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 30.0,
-                                fontWeight: FontWeight.w900
-                              ),),
-                              const Icon(Icons.event_seat,color: Colors.deepOrangeAccent,)
+                              Text(
+                                model.seats,
+                                style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 30.0,
+                                    fontWeight: FontWeight.w900),
+                              ),
+                              const Icon(
+                                Icons.event_seat,
+                                color: Colors.deepOrangeAccent,
+                              )
                             ],
                           ),
                         ),
                         Row(
                           children: [
-                            const Icon(Icons.location_on, color: Colors.blueAccent,size: 18,),
-                            Text(model.address,style: TextStyle(color: Colors.grey[600]),),
+                            const Icon(
+                              Icons.location_on,
+                              color: Colors.blueAccent,
+                              size: 18,
+                            ),
+                            Text(
+                              model.location.address,
+                              style: TextStyle(color: Colors.grey[600]),
+                            ),
                           ],
                         ),
                         const Divider(
@@ -186,7 +202,7 @@ class _DetailPageState extends State<DetailScreen> {
                         Row(
                           children: <Widget>[
                             ProgressWidget(
-                              value: model.goodReviews,
+                              value: model.goodReviews.toDouble(),
                               totalValue: 1000,
                               activeColor: LightColor.purpleExtraLight,
                               backgroundColor: LightColor.grey.withOpacity(.3),
@@ -194,7 +210,7 @@ class _DetailPageState extends State<DetailScreen> {
                               durationTime: 500,
                             ),
                             ProgressWidget(
-                              value: model.totalScore,
+                              value: model.totalScore.toDouble(),
                               totalValue: 100,
                               activeColor: LightColor.purpleLight,
                               backgroundColor: LightColor.grey.withOpacity(.3),
@@ -202,7 +218,7 @@ class _DetailPageState extends State<DetailScreen> {
                               durationTime: 300,
                             ),
                             ProgressWidget(
-                              value: model.satisfaction,
+                              value: model.satisfaction.toDouble(),
                               totalValue: 100,
                               activeColor: LightColor.purple,
                               backgroundColor: LightColor.grey.withOpacity(.3),
@@ -235,9 +251,9 @@ class _DetailPageState extends State<DetailScreen> {
                                 color: Colors.white,
                               ),
                             ).ripple(
-                                  () {
-                                    _launchCaller(model.barberContact);
-                                  },
+                              () {
+                                _launchCaller(model.barber.barberContact);
+                              },
                               borderRadius: BorderRadius.circular(10),
                             ),
                             SizedBox(
@@ -255,9 +271,9 @@ class _DetailPageState extends State<DetailScreen> {
                                 color: Colors.white,
                               ),
                             ).ripple(
-                                  () {
-                                    _smsLauncher(model.barberContact);
-                                  },
+                              () {
+                                _smsLauncher(model.barber.barberContact);
+                              },
                               borderRadius: BorderRadius.circular(10),
                             ),
                             const SizedBox(
