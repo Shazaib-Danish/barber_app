@@ -1,4 +1,5 @@
 class CustomerInfo {
+  final String customerId;
   final String customerFullName;
   final String customerEmail;
   final String customerContact;
@@ -6,7 +7,8 @@ class CustomerInfo {
   final String roll;
 
   CustomerInfo(
-      {required this.customerFullName,
+      {required this.customerId,
+      required this.customerFullName,
       required this.customerEmail,
       required this.customerContact,
       required this.roll,

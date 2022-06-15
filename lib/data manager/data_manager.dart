@@ -1,11 +1,17 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:gromify/model/barber_model.dart';
+import 'package:gromify/model/data.dart';
 import 'package:gromify/model/user_model.dart';
+
+import '../model/appointment_model.dart';
 
 class DataManagerProvider extends ChangeNotifier {
   bool isLoading = false;
 
   late List<BarberModel> allBarbers;
+  late List<BarberModel> topBarbers;
 
   List<BarberModel> searchList = [];
 
@@ -15,7 +21,15 @@ class DataManagerProvider extends ChangeNotifier {
 
   late CustomerInfo customerProfile;
 
+  late BarberModel barberProfile;
+
   late bool isSearching = false;
+
+  late List<AppointmentModel> myAppointments = [];
+
+  late BarberModel myAppointmentWithBarber;
+
+  List<AppointmentModel> appointmentList = [];
 
   void setLoadingStatus(bool loading) {
     isLoading = loading;
@@ -31,12 +45,27 @@ class DataManagerProvider extends ChangeNotifier {
 
   CustomerInfo get currentUser => customerProfile;
 
+  void setBarberProfile(BarberModel user) {
+    print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+    barberProfile = user;
+    notifyListeners();
+  }
+
+  BarberModel get getBarberProfile => barberProfile;
+
   void setAllBarbers(List<BarberModel> barberMapList) {
     allBarbers = barberMapList;
     notifyListeners();
   }
 
   List<BarberModel> get getAllBarbers => allBarbers;
+
+  void setTopBarbers(List<BarberModel> barberTopList) {
+    topBarbers = barberTopList;
+    notifyListeners();
+  }
+
+  List<BarberModel> get getTopBarbers => topBarbers;
 
   void getSearch(String searchKey) {
     allBarbers.forEach((element) {
@@ -61,8 +90,10 @@ class DataManagerProvider extends ChangeNotifier {
 
   bool get searchingStart => isSearching;
 
-  void setBarberBasicInformation(String name, String email, String contact) {
+  void setBarberBasicInformation(
+      String id, String name, String email, String contact) {
     barberInfo = BarberInfo(
+        barberId: id,
         barberFullName: name,
         barberEmail: email,
         barberContact: contact,
@@ -84,7 +115,8 @@ class DataManagerProvider extends ChangeNotifier {
         Location(address: address, latitude: latitude, longitude: longitude);
     ShopStatus status =
         ShopStatus(status: 'Open', startTime: startTime, endTime: endTime);
-
+    final _random = Random();
+    String index = urls[_random.nextInt(urls.length)];
     barberCompleteData = BarberModel(
         shopName: shopName,
         barber: barberInfo,
@@ -94,11 +126,28 @@ class DataManagerProvider extends ChangeNotifier {
         goodReviews: 0,
         totalScore: 0,
         satisfaction: 0,
-        image: '',
+        image: index,
         location: location,
         shopStatus: status);
     notifyListeners();
   }
 
   BarberModel get getBarberDetails => barberCompleteData;
+
+/////////////////appointment
+  void setAppointmentList(List<AppointmentModel> model) {
+    appointmentList = model;
+    notifyListeners();
+  }
+
+  void setMyAppointments(List<AppointmentModel> model) {
+    myAppointments = model;
+    notifyListeners();
+  }
+
+  void setMyAppointmentWithBarber(BarberModel barberModel){
+    myAppointmentWithBarber = barberModel;
+    notifyListeners();
+  }
+
 }

@@ -41,6 +41,7 @@ class _ShopDetailsScreenState extends State<ShopDetailsScreen> {
       initialTime: initialTime,
     );
 
+
     setState(() {
       startingTime = pickedTime!;
 
@@ -128,6 +129,7 @@ class _ShopDetailsScreenState extends State<ShopDetailsScreen> {
                       height: 30.0,
                     ),
                     TextFormField(
+                      controller: descriptionController,
                       maxLines: 5,
                       validator: (text) {
                         if (text == null || text.isEmpty) {
@@ -329,7 +331,7 @@ class _ShopDetailsScreenState extends State<ShopDetailsScreen> {
                                   context,
                                   CupertinoPageRoute(
                                       builder: (context) =>
-                                          const BarberDashboard()));
+                                          BarberDashboard()));
                             });
                           }
                         }

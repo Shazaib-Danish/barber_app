@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gromify/components/k_components.dart';
 import 'package:gromify/screens/dashboard.dart';
-import 'package:gromify/screens/signup_screen.dart';
 import 'package:lottie/lottie.dart';
 
 

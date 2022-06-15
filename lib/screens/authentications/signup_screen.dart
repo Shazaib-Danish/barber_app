@@ -2,12 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gromify/components/k_components.dart';
 import 'package:gromify/firebase_authentications/firebase_authen.dart';
-import 'package:gromify/screens/otp_screen.dart';
+import 'package:gromify/screens/authentications/otp_screen.dart';
 import 'package:gromify/widgets/cust_barber_dropdown.dart';
 import 'package:lottie/lottie.dart';
-
-import '../model/user_model.dart';
+import 'package:uuid/uuid.dart';
+import '../../../model/user_model.dart';
 import 'login _screen.dart';
+
 
 class SignupScreen extends StatefulWidget {
   SignupScreen({Key? key}) : super(key: key);
@@ -138,7 +139,9 @@ class _SignupScreenState extends State<SignupScreen> {
                         setState(() {
                           isLoading = true;
                         });
+                        const userid = Uuid();
                         final userModel = CustomerInfo(
+                            customerId: userid.v1(),
                             customerFullName: fullNameController.text,
                             customerEmail: emailController.text,
                             customerContact: '+92${contactController.text}',

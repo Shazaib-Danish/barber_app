@@ -42,8 +42,17 @@ Widget barberTile(BarberModel model, BuildContext context) {
                 borderRadius: BorderRadius.circular(15),
                 color: randomColor(context),
               ),
-              child: Image.asset(
+              child: Image.network(
                 model.image,
+                loadingBuilder: (context, child, loading) {
+                  if (loading == null)
+                    return child;
+                  else {
+                    return Center(
+                      child: CircularProgressIndicator(color: Colors.cyan,),
+                    );
+                  }
+                },
                 height: 50,
                 width: 50,
                 fit: BoxFit.fill,
@@ -54,27 +63,38 @@ Widget barberTile(BarberModel model, BuildContext context) {
         title: Text(model.shopName,
             style: TextStyles.title.bold
                 .copyWith(color: Colors.black, fontSize: 16.0)),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        subtitle: Row(
           children: [
-            Text(
-              model.barber.barberFullName,
-              style: TextStyles.bodySm.subTitleColor.bold
-                  .copyWith(fontSize: 12.0),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  model.barber.barberFullName,
+                  style: TextStyles.bodySm.subTitleColor.bold
+                      .copyWith(fontSize: 12.0),
+                ),
+                const SizedBox(
+                  height: 4.0,
+                ),
+                SmoothStarRating(
+                    onRatingChanged: (v) {},
+                    starCount: 5,
+                    rating: model.rating,
+                    size: 15.0,
+                    filledIconData: Icons.star,
+                    halfFilledIconData: Icons.star,
+                    color: Colors.yellow[700],
+                    borderColor: Colors.grey,
+                    spacing: 0.0)
+              ],
             ),
-            const SizedBox(
-              height: 4.0,
+            Spacer(),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20.0),
+              child: Text(model.shopStatus.status, style: TextStyle(
+                color: model.shopStatus.status == 'Open' ? Colors.green : Colors.red,
+              ),),
             ),
-            SmoothStarRating(
-                onRatingChanged: (v) {},
-                starCount: 5,
-                rating: model.rating,
-                size: 15.0,
-                filledIconData: Icons.star,
-                halfFilledIconData: Icons.star,
-                color: Colors.yellow[700],
-                borderColor: Colors.grey,
-                spacing: 0.0)
           ],
         ),
         trailing: Icon(

@@ -9,7 +9,7 @@
    <application
         android:label="DeveStyle"
         android:name="${applicationName}"
-        android:icon="@mipmap/logo">
+        android:icon="@mipmap/ic_launcher">
 
        <meta-data android:name="com.google.android.geo.API_KEY"
            android:value="AIzaSyDnLt_w5gSghxwwTJybvgFIwq8CrOFn_U4"/>

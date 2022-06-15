@@ -26,6 +26,7 @@ class BarberModel {
 }
 
 class BarberInfo {
+  final String barberId;
   final String barberFullName;
   final String barberEmail;
   final String barberContact;
@@ -33,7 +34,8 @@ class BarberInfo {
   final String roll;
 
   BarberInfo(
-      {required this.barberFullName,
+      {required this.barberId,
+      required this.barberFullName,
       required this.barberEmail,
       required this.barberContact,
       required this.roll,

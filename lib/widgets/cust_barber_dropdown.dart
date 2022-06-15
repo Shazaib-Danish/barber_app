@@ -20,12 +20,7 @@ class ReusableDropDown extends StatelessWidget {
             child: Text(value),
           );
         }).toList(),
-        decoration: kTextFormFieldDecoration.copyWith(
-          enabledBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Color(0xffb8b5cb),)
-          ),
-
-        ),
+        decoration: kTextFormFieldDecoration,
         onChanged: onChanged);
   }
 }

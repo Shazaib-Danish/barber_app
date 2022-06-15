@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:gromify/data%20manager/data_manager.dart';
 import 'package:gromify/firebase_data/firebase_data.dart';
 import 'package:gromify/model/user_model.dart';
+import 'package:gromify/screens/barber/barber_dashboard.dart';
 import 'package:gromify/screens/dashboard.dart';
+import 'package:gromify/screens/authentications/login%20_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../screens/barber/shop_details_screen.dart';
 
@@ -28,7 +31,9 @@ Future<void> verify(
   PhoneAuthCredential credential = PhoneAuthProvider.credential(
       verificationId: verificationID, smsCode: smsCode);
   late String code;
+  late SharedPreferences login;
   try {
+    login = await SharedPreferences.getInstance();
     await FirebaseAuth.instance.signInWithCredential(credential);
     try {
       final userResult = await FirebaseAuth.instance
@@ -42,20 +47,29 @@ Future<void> verify(
                 password: customer.customerPassword)
             .whenComplete(() {
           if (customer.roll == 'Customer') {
-            addCustomerProfileData(customer);
             Provider.of<DataManagerProvider>(context, listen: false)
                 .setCustomerProfile(customer);
+            addCustomerProfileData(customer, context);
+            login.setString('email', customer.customerEmail);
+            login.setString('password', customer.customerPassword);
+            login.setString('roll', customer.roll);
+            login.setBool('login', false);
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (context) => HomePageScreen()),
                 (Route<dynamic> route) => false);
           } else {
-            Provider.of<DataManagerProvider>(context, listen: false).setBarberBasicInformation(
-                customer.customerFullName,
-                customer.customerEmail,
-                customer.customerContact);
+            Provider.of<DataManagerProvider>(context, listen: false)
+                .setBarberBasicInformation(
+                    userResult.user!.uid,
+                    customer.customerFullName,
+                    customer.customerEmail,
+                    customer.customerContact);
+            login.setString('email', customer.customerEmail);
+            login.setString('password', customer.customerPassword);
+            login.setString('roll', customer.roll);
+            login.setBool('login', false);
             Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                    builder: (context) =>  ShopDetailsScreen()),
+                MaterialPageRoute(builder: (context) => ShopDetailsScreen()),
                 (Route<dynamic> route) => false);
           }
         });
@@ -76,16 +90,25 @@ Future<void> verify(
   }
 }
 
-Future<void> signIn(String email, String password, BuildContext context) async {
+Future<void> signIn(
+    String email, String password, String roll, BuildContext context) async {
   try {
     final userResult = await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password);
     if (userResult != null) {
-      await getUserProfile(email, context).whenComplete(() {
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => HomePageScreen()),
-            (Route<dynamic> route) => false);
-      });
+      if (roll == 'Customer') {
+        await getCustomerProfile(email, context).whenComplete(() {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => HomePageScreen()),
+              (Route<dynamic> route) => false);
+        });
+      } else {
+        await getBarberProfile(email, context).whenComplete(() {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => BarberDashboard()),
+              (Route<dynamic> route) => false);
+        });
+      }
     }
   } on FirebaseAuthException catch (e) {
     ScaffoldMessenger.of(context)

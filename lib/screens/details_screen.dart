@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gromify/firebase_data/firebase_data.dart';
+import 'package:gromify/screens/appointment/make_appointment.dart';
 import 'package:gromify/theme/extention.dart';
 import 'package:smooth_star_rating_null_safety/smooth_star_rating_null_safety.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -8,14 +10,8 @@ import '../model/barber_model.dart';
 import '../theme/light_color.dart';
 import '../theme/text_styles.dart';
 import '../theme/theme.dart';
+import '../widgets/pic_up_location.dart';
 import '../widgets/progress_widgets.dart';
-
-/*
-Title:DetailScreen
-Purpose:DetailScreen
-Created By:Kalpesh Khandla
-Created Date: 30 April 2021
-*/
 
 class DetailScreen extends StatefulWidget {
   final BarberModel model;
@@ -35,6 +31,7 @@ class _DetailPageState extends State<DetailScreen> {
   @override
   void initState() {
     model = widget.model;
+    getAppointmentFromFirebase(widget.model.barber.barberId, context);
     super.initState();
   }
 
@@ -99,8 +96,17 @@ class _DetailPageState extends State<DetailScreen> {
                   color: Colors.blueAccent,
                   width: MediaQuery.of(context).size.width * 1.0,
                   height: MediaQuery.of(context).size.height * 0.45,
-                  child: Image.asset(
+                  child: Image.network(
                     model.image,
+                    loadingBuilder: (context, child, loading) {
+                      if (loading == null)
+                        return child;
+                      else {
+                        return Center(
+                          child: CircularProgressIndicator(color: Colors.cyan),
+                        );
+                      }
+                    },
                     fit: BoxFit.fitHeight,
                   )),
             ),
@@ -133,9 +139,12 @@ class _DetailPageState extends State<DetailScreen> {
                           title: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
-                              Text(
-                                model.shopName,
-                                style: titleStyle.copyWith(color: Colors.black),
+                              Expanded(
+                                child: Text(
+                                  model.shopName,
+                                  style:
+                                      titleStyle.copyWith(color: Colors.black),
+                                ),
                               ),
                               const SizedBox(
                                 width: 10,
@@ -167,7 +176,14 @@ class _DetailPageState extends State<DetailScreen> {
                                 model.barber.barberFullName,
                                 style: TextStyles.bodySm.subTitleColor.bold,
                               ),
-                              Spacer(),
+                              const SizedBox(
+                                width: 20.0,
+                              ),
+                              Text(model.shopStatus.status, style: TextStyle(
+                                fontWeight: FontWeight.w800,
+                                color: model.shopStatus.status == 'Open' ? Colors.green : Colors.red,
+                              ),),
+                              const Spacer(),
                               Text(
                                 model.seats,
                                 style: const TextStyle(
@@ -181,19 +197,6 @@ class _DetailPageState extends State<DetailScreen> {
                               )
                             ],
                           ),
-                        ),
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.location_on,
-                              color: Colors.blueAccent,
-                              size: 18,
-                            ),
-                            Text(
-                              model.location.address,
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                          ],
                         ),
                         const Divider(
                           thickness: .3,
@@ -236,6 +239,47 @@ class _DetailPageState extends State<DetailScreen> {
                           model.description,
                           style: TextStyles.body.subTitleColor,
                         ),
+                        const SizedBox(
+                          height: 10.0,
+                        ),
+                        Text("Address", style: titleStyle).vP16,
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Icon(
+                              Icons.location_on,
+                              color: Colors.blueAccent,
+                              size: 20,
+                            ),
+                            Expanded(
+                              child: Text(
+                                model.location.address,
+                                style: TextStyle(
+                                    color: Colors.grey[600], fontSize: 15.0),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 3.0,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 1.0,
+                          height: MediaQuery.of(context).size.height * 0.25,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20.0),
+                            child: PickedUpLocation(
+                                latitude: model.location.latitude,
+                                longitude: model.location.longitude),
+                          ),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20.0),
+                              border:
+                                  Border.all(color: const Color(0xffb8b5cb))),
+                        ),
+                        const SizedBox(
+                          height: 20.0,
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
@@ -246,7 +290,7 @@ class _DetailPageState extends State<DetailScreen> {
                                 borderRadius: BorderRadius.circular(10),
                                 color: LightColor.grey.withAlpha(150),
                               ),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.call,
                                 color: Colors.white,
                               ),
@@ -256,39 +300,58 @@ class _DetailPageState extends State<DetailScreen> {
                               },
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Container(
-                              height: 45,
-                              width: 45,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: LightColor.grey.withAlpha(150),
-                              ),
-                              child: const Icon(
-                                Icons.chat_bubble,
-                                color: Colors.white,
-                              ),
-                            ).ripple(
-                              () {
-                                _smsLauncher(model.barber.barberContact);
-                              },
-                              borderRadius: BorderRadius.circular(10),
-                            ),
                             const SizedBox(
                               width: 10,
                             ),
-                            Container(
-                              height: 45,
-                              decoration: BoxDecoration(
-                                  color: Theme.of(context).primaryColor,
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: TextButton(
-                                onPressed: () {},
-                                child: Text(
-                                  "Make an appointment",
-                                  style: TextStyles.titleNormal.white,
+                            // Container(
+                            //   height: 45,
+                            //   width: 45,
+                            //   decoration: BoxDecoration(
+                            //     borderRadius: BorderRadius.circular(10),
+                            //     color: LightColor.grey.withAlpha(150),
+                            //   ),
+                            //   child: const Icon(
+                            //     Icons.chat_bubble,
+                            //     color: Colors.white,
+                            //   ),
+                            // ).ripple(
+                            //   () {
+                            //     _smsLauncher(model.barber.barberContact);
+                            //   },
+                            //   borderRadius: BorderRadius.circular(10),
+                            // ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            AbsorbPointer(
+                              absorbing: model.shopStatus.status == 'Open' ? false : true,
+                              child: Container(
+                                height: 45,
+                                decoration: BoxDecoration(
+                                    color: model.shopStatus.status == 'Open' ? Theme.of(context).primaryColor : Colors.red,
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        CupertinoPageRoute(
+                                            builder: (context) =>
+                                                CustomerAppointmentScreen(
+                                                  shopName: model.shopName,
+                                                  barberName:
+                                                      model.barber.barberFullName,
+                                                  shopAddress: model.location.address,
+                                                  baberContact: model.barber.barberContact,
+                                                  barberId: model.barber.barberId,
+                                                  startTime: model.shopStatus.startTime,
+                                                  endTime: model.shopStatus.endTime,
+                                                  seats: int.parse(model.seats),
+                                                )));
+                                  },
+                                  child: Text(
+                                    model.shopStatus.status == 'Open' ? "Make an appointment" : 'Closed',
+                                    style: TextStyles.titleNormal.white,
+                                  ),
                                 ),
                               ),
                             ),

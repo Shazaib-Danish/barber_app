@@ -8,5 +8,6 @@ class Logout{
     logout.setBool('login', true);
     logout.remove('email');
     logout.remove('password');
+    logout.remove('roll');
   }
 }

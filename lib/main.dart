@@ -1,19 +1,20 @@
 import 'dart:async';
-import 'package:gromify/screens/login%20_screen.dart';
-import 'package:map_location_picker/generated/l10n.dart' as location_picker;
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:gromify/data%20manager/data_manager.dart';
 import 'package:gromify/firebase_authentications/firebase_authen.dart';
-import 'package:gromify/screens/barber/shop_details_screen.dart';
+import 'package:gromify/screens/barber/barber_dashboard.dart';
+import 'package:gromify/screens/dashboard.dart';
+import 'package:gromify/screens/authentications/login%20_screen.dart';
+import 'package:map_location_picker/generated/l10n.dart' as location_picker;
 import 'package:provider/provider.dart';
-//import 'package:localization/localization.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Firebase.initializeApp();
-  runApp(MyApp());
+  await Firebase.initializeApp();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
       },
       child: MaterialApp(
         title: "DeveStyle",
-        localizationsDelegates:  const [
+        localizationsDelegates: const [
           location_picker.S.delegate,
         ],
         supportedLocales: const <Locale>[
@@ -48,7 +49,9 @@ class MyApp extends StatelessWidget {
           // text styling for headlines, titles, bodies of text, and more.
           textTheme: const TextTheme(
             headline1: TextStyle(
-                fontSize: 25.0, fontWeight: FontWeight.bold, color: Colors.black),
+                fontSize: 25.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.black),
             headline2: TextStyle(fontSize: 20.0, fontWeight: FontWeight.normal),
             headline6: TextStyle(fontSize: 20.0, fontStyle: FontStyle.normal),
             bodyText2: TextStyle(
@@ -69,20 +72,22 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreen extends State<SplashScreen> {
-
   // -------------- for start page
   Widget defaultPage = Container();
   late SharedPreferences login;
   bool loginSuccess = false;
+  late String roll;
 
   Future<void> checkIfAlreadyLogin() async {
     login = await SharedPreferences.getInstance();
     bool newUser = (login.getBool('login') ?? true);
     if (newUser == false) {
-      signIn(login.getString('email').toString(), login.getString('password').toString(), context);
       setState(() {
         loginSuccess = true;
+        roll = login.getString('roll').toString();
       });
+      signIn(login.getString('email').toString(),
+          login.getString('password').toString(), roll, context);
     }
   }
 
@@ -99,10 +104,14 @@ class _SplashScreen extends State<SplashScreen> {
   void initState() {
     super.initState();
     checkIfAlreadyLogin();
-    Timer(Duration(seconds: 5), () {
+    Timer(const Duration(seconds: 5), () {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (BuildContext context) => LoginScreen()//loginSuccess ? HomePageScreen() : LoginScreen(),
+          builder: (BuildContext context) => loginSuccess
+              ? roll == 'Customer'
+                  ? HomePageScreen()
+                  : BarberDashboard()
+              : LoginScreen(),
         ),
       );
     });
