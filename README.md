@@ -23,7 +23,7 @@ Some screen shots of App are here:
 
 
 
-![173886245-5990aeea-f832-4d6e-979d-3e2d4d57e32f](https://user-images.githubusercontent.com/75744833/180930397-4b1b8f48-43a0-47c4-a4bb-5fc53667ec6d.jpeg)
+![173886245-5990aeea-f832-4d6e-979d-3e2d4d57e32f](https://user-images.githubusercontent.com/75744833/180930397-4b1b8f48-43a0-47c4-a4bb-5fc53667ec6d.jpeg =100x20)
 
 ![173886370-4b641e94-48d5-4de7-a0f6-d23468adab22](https://user-images.githubusercontent.com/75744833/180930433-7d0b3d16-c008-4747-95f7-9370899d0980.jpeg)
 
